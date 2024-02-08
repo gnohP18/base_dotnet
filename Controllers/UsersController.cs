@@ -18,47 +18,72 @@ namespace base_dotnet.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Get list User
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        public ActionResult<IEnumerable<User>> Get()
+        public async Task<ActionResult<IEnumerable<User>>> Get()
         {
-            return _userService.GetUsers();
+            return  await _userService.GetUsers();
         }
 
+        /// <summary>
+        /// Get user bu Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [UserTypeFilter(UserRole.Admin, UserRole.User)]
-        public ActionResult<User> Get(int id)
+        public async Task<ActionResult<User>> Get(int id)
         {
-            var user = _userService.GetUserById(id);
+            var user = await _userService.GetUserById(id);
             if (user is null) return NotFound();
             return Ok(user);
         }
 
+        /// <summary>
+        /// Create new user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPost]
         [UserTypeFilter(UserRole.Admin, UserRole.User)]
-        public ActionResult Post([FromBody] User user)
+        public async Task<ActionResult> Post([FromBody] User user)
         {
-            _userService.CreateUser(user);
+            await _userService.CreateUser(user);
             return Ok();
         }
 
+        /// <summary>
+        /// Edit User
+        /// </summary>
+        /// <param name="id">User if</param>
+        /// <param name="user">User info update</param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [UserTypeFilter(UserRole.Admin, UserRole.User)]
-        public ActionResult Put(int id, [FromBody] User user)
+        public async Task<ActionResult> Put(int id, [FromBody] User user)
         {
-            var currentUser = _userService.GetUserById(id);
+            var currentUser = await _userService.GetUserById(id);
             if (currentUser is null) return NotFound();
             currentUser.Username = user.Username;
             currentUser.Email = user.Email;
-            _userService.UpdateUser(currentUser);
+            await _userService.UpdateUser(currentUser);
             return Ok();
         }
 
+        /// <summary>
+        /// Delete user by id
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var currentUser = _userService.GetUserById(id);
+            var currentUser = await _userService.GetUserById(id);
             if (currentUser is null) return NotFound();
-            _userService.DeleteUser(currentUser);
+            await _userService.DeleteUser(currentUser);
             return Ok();
         }
     }

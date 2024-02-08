@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using base_dotnet.Databases;
 using base_dotnet.Middlewares;
@@ -47,6 +48,10 @@ services.AddSwaggerGen(c =>
                 Array.Empty<string>()
             }
         });
+    // Set the comments path for the Swagger JSON and UI.
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 });
 services.AddCors(options =>
     {
