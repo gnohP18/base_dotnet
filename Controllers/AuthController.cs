@@ -22,11 +22,16 @@ namespace base_dotnet.Controllers
             _tokenService = tokenService;
         }
 
+        /// <summary>
+        /// Register new user
+        /// </summary>
+        /// <param name="registerUser">AuthRegisterDto</param>
+        /// <returns></returns>
         [HttpPost("register")]
-        public IActionResult Register([FromBody] AuthRegisterDto registerUser)
+        public async Task<IActionResult> Register([FromBody] AuthRegisterDto registerUser)
         {
             registerUser.Username = registerUser.Username.ToLower();
-            if (_userService.GetUserByUsername(registerUser.Username) is not null)
+            if (await _userService.GetUserByUsername(registerUser.Username) is not null)
                 return BadRequest("Username already registered");            
 
             using var hashFunc = new HMACSHA256();
@@ -40,15 +45,20 @@ namespace base_dotnet.Controllers
                 PasswordHash = hashFunc.ComputeHash(passwordBytes),
                 PasswordSalt = hashFunc.Key
             };
-            _userService.CreateUser(newUser);
+            await _userService.CreateUser(newUser);
             return Ok(_tokenService.GenerateToken(newUser));
         }
 
+        /// <summary>
+        /// Login for user
+        /// </summary>
+        /// <param name="loginUser">AuthLoginDto</param>
+        /// <returns></returns>
         [HttpPost("login")]
-        public IActionResult Login([FromBody] AuthLoginDto loginUser)
+        public async Task<IActionResult> Login([FromBody] AuthLoginDto loginUser)
         {
             loginUser.Username = loginUser.Username.ToLower();
-            var existedUser = _userService.GetUserByUsername(loginUser.Username);
+            var existedUser = await _userService.GetUserByUsername(loginUser.Username);
             if (existedUser is null) return Unauthorized("User not found");
             using var hashFunc = new HMACSHA256(existedUser.PasswordSalt);
             var passwordBytes = Encoding.UTF8.GetBytes(loginUser.Password);
