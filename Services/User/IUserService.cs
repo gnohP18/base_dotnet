@@ -1,4 +1,5 @@
 using base_dotnet.Databases.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace base_dotnet.Services
 {
@@ -9,6 +10,6 @@ namespace base_dotnet.Services
         Task<User?> GetUserByUsername(string username);
         Task CreateUser(User user);
         Task UpdateUser(User user);
-        Task DeleteUser(User user);
+        Task DeleteUser(int id);
     }
 }
