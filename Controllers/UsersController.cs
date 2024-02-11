@@ -29,7 +29,7 @@ namespace base_dotnet.Controllers
         }
 
         /// <summary>
-        /// Get user bu Id
+        /// Get user by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -58,7 +58,7 @@ namespace base_dotnet.Controllers
         /// <summary>
         /// Edit User
         /// </summary>
-        /// <param name="id">User if</param>
+        /// <param name="id">User id</param>
         /// <param name="user">User info update</param>
         /// <returns></returns>
         [HttpPut("{id}")]
@@ -80,10 +80,8 @@ namespace base_dotnet.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
-        {
-            var currentUser = await _userService.GetUserById(id);
-            if (currentUser is null) return NotFound();
-            await _userService.DeleteUser(currentUser);
+        {            
+            await _userService.DeleteUser(id);
             return Ok();
         }
     }
